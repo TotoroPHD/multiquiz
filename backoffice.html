@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Blindtest Backoffice</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">            
+        <script src="https://cdn.jsdelivr.net/npm/comfy.js@latest/dist/comfy.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@latest/dist/obs-websocket.js"></script>
+    </head>
+    <body onload = "connect()">
+        <div class="w3-container w3-center">
+            <div class = "w3-container">
+                <div class="w3-container">
+                    <div class="w3-container" id="OBScoLabel"><span style="color:red">Non connecté</span></div>
+                </div>
+            </div>
+
+            <div class="w3-container">
+                <button class="w3-button w3-grey w3-border w3-border-black" id="btnCam">Camera</button>
+                <button class="w3-button w3-grey w3-border w3-border-black" id="btnGeoGuessr">GeoGuessr</button>
+                <button class="w3-button w3-grey w3-border w3-border-black" id="btnScore">Score</button>
+                <button class="w3-button w3-grey w3-border w3-border-black" id="btnTotal">Total</button>
+                <button class="w3-button w3-grey w3-border w3-border-black" id="btnProgramme">Programme</button>
+                <button class="w3-button w3-grey w3-border w3-border-black" id="btnHideVideos">Hide All Videos</button>
+            </div>
+        </div>
+    </body>
+    <script src="config.js"></script>
+    <script src="games.js"></script>
+    <script src="backoffice.js"></script>
+</html>

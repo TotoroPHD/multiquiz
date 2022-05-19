@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Programme</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@latest/dist/obs-websocket.js"></script>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500&display=swap');
+
+    body {
+        font-size: 40px;
+        font-family: 'Sora', sans-serif;
+        color: white;
+    }
+
+    h1 {
+        font-size: 80px;
+        font-family: 'Sora', sans-serif;
+    }
+
+    p {
+        font-size: 60px;
+        font-family: 'Sora', sans-serif;
+        line-height: 1.6;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 800px;
+    }
+</style>
+
+<body onload="connect()">
+    <div class="w3-container w3-center center">
+        <div id="programme">COUCOU</div>
+    </div>
+</body>
+<script src="../games.js"></script>
+<script src="../config.js"></script>
+<script>
+
+    var prog = document.getElementById("programme");
+    prog.innerHTML = "<h1>Programme de ce soir</h1>"
+    for (var i = 0; i < games.length; i++) {
+        if (!games[i].done) prog.innerHTML += "<p>" + games[i].title + "</p>"
+        else prog.innerHTML += "<p><s>" + games[i].title + "</s></p>"
+    }
+
+    const obs = new OBSWebSocket();
+
+    function connect() {
+        obs.connect({ address: 'localhost:4444', password: OBSwsPassword })
+    }
+
+    obs.addListener("BroadcastCustomMessage", function (event) {
+        if (event.data.what == "programme") {
+            var prog = document.getElementById("programme");
+            prog.innerHTML = "<h1>Programme de ce soir</h1>"
+            for (var i = 0; i < event.data.games.length; i++) {
+                if (!event.data.games[i].done) prog.innerHTML += "<p>" + event.data.games[i].title + "</p>"
+                else prog.innerHTML += "<p><s>" + event.data.games[i].title + "</s></p>"
+            }
+        }
+
+    })
+
+
+</script>
+
+</html>
