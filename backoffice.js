@@ -12,52 +12,59 @@ function sendToOBS(obj) {
     obs.send("BroadcastCustomMessage", { "realm": "test", "data": obj });
 }
 
+var curGame = 0;
+var curQuestion = 0;
+changeText("btnGameTitle", games[curGame].title)
+redrawQuestion()
+
+
+
+
 // ------------------------------------------------------
 //         EVENEMENTS DE LA PAGE (CLICS, ETC)
 // ------------------------------------------------------
 
 
 document.getElementById('btnCam').addEventListener('click', function () {
-    obs.send("GetSceneItemProperties", { "item":"cam"}).then(data => {
-        if(data.visible){document.getElementById('btnCam').innerHTML = "Camera is OFF"}
-        else {document.getElementById('btnCam').innerHTML = "Camera is ON"}
+    obs.send("GetSceneItemProperties", { "item": "cam" }).then(data => {
+        if (data.visible) { document.getElementById('btnCam').innerHTML = "Camera is OFF" }
+        else { document.getElementById('btnCam').innerHTML = "Camera is ON" }
         display("cam", !data.visible)
     })
 });
 
 document.getElementById('btnGeoGuessr').addEventListener('click', function () {
-    obs.send("GetSceneItemProperties", { "item":"GeoGuessr Inversé"}).then(data => {
-        if (!data.visible)display("GeoGuessr Inversé", true)
+    obs.send("GetSceneItemProperties", { "item": "GeoGuessr Inversé" }).then(data => {
+        if (!data.visible) display("GeoGuessr Inversé", true)
     })
-    obs.send("RestartMedia", {"sourceName":"GeoGuessr Inversé"})
+    obs.send("RestartMedia", { "sourceName": "GeoGuessr Inversé" })
 });
 
 document.getElementById('btnScore').addEventListener('click', function () {
-    obs.send("GetSceneItemProperties", { "item":"scoreManche"}).then(data => {
+    obs.send("GetSceneItemProperties", { "item": "scoreManche" }).then(data => {
         display("scoreManche", !data.visible)
     })
-    obs.send("GetSceneItemProperties", { "item":"scoreTotal"}).then(data => {
+    obs.send("GetSceneItemProperties", { "item": "scoreTotal" }).then(data => {
         if (data.visible) display("scoreTotal", false)
-    })        
+    })
 });
 
 document.getElementById('btnTotal').addEventListener('click', function () {
-    obs.send("GetSceneItemProperties", { "item":"scoreTotal"}).then(data => {
+    obs.send("GetSceneItemProperties", { "item": "scoreTotal" }).then(data => {
         display("scoreTotal", !data.visible)
     })
-    obs.send("GetSceneItemProperties", { "item":"scoreManche"}).then(data => {
+    obs.send("GetSceneItemProperties", { "item": "scoreManche" }).then(data => {
         if (data.visible) display("scoreManche", false)
-    })    
+    })
 });
 
 document.getElementById('btnProgramme').addEventListener('click', function () {
-    obs.send("GetSceneItemProperties", { "item":"programme"}).then(data => {
+    obs.send("GetSceneItemProperties", { "item": "programme" }).then(data => {
         var programme = new Object();
         programme.games = [];
         programme.what = "programme"
-        for (var i = 0; i < games.length; i++)
-        {
-            programme.games.push({"title":games[i].title, "done":games[i].done})
+        for (var i = 0; i < games.length; i++) {
+            programme.games.push({ "title": games[i].title, "done": games[i].done })
         }
         sendToOBS(programme);
         display("programme", !data.visible)
@@ -68,9 +75,61 @@ document.getElementById('btnHideVideos').addEventListener('click', function () {
     display("GeoGuessr Inversé", false)
 });
 
+document.getElementById('btnPrevGame').addEventListener('click', function () {
+    if (curGame > 0) { curGame--; changeText("btnGameTitle", games[curGame].title) }
+    curQuestion = 0;
+    redrawQuestion()
+});
+
+document.getElementById('btnNextGame').addEventListener('click', function () {
+    if (curGame < games.length - 1) { curGame++; changeText("btnGameTitle", games[curGame].title) }
+    curQuestion = 0;
+    redrawQuestion()
+});
+
+document.getElementById('btnPrevQuestion').addEventListener('click', function () {
+    if (curQuestion > 0) { curQuestion--; redrawQuestion() }
+});
+
+document.getElementById('btnStartQuestion').addEventListener('click', function () {
+    if (games[curGame].subtype == "pixel")
+    {
+        if (games[curGame].questions[curQuestion].url != null)
+        {
+            var pixel = new Object();
+            pixel.what = "pixel";
+            pixel.url = games[curGame].questions[curQuestion].url
+            sendToOBS(pixel);
+        }
+    }
+});
+
+document.getElementById('btnNextQuestion').addEventListener('click', function () {
+    if (curQuestion < games[curGame].questions.length - 1) { curQuestion++; redrawQuestion() }
+});
+
+
+
+
 // ------------------------------------------------------
 //                FONCTIONS UTILITAIRES 
 // ------------------------------------------------------
+
+function redrawQuestion() {
+    changeText("displayQuestions", displayQuestionFromJSON(games[curGame].questions[curQuestion]));
+}
+
+function displayQuestionFromJSON(json) {
+    var texte = JSON.stringify(json);
+    texte=texte.replaceAll("{", "")
+    texte=texte.replaceAll("}", "")
+    texte=texte.replaceAll("\"", "")
+    texte=texte.replaceAll(":", " : ")
+    texte=texte.replaceAll(",", "<br>")
+    console.log(texte)
+    return texte
+}
+
 
 function connect() {
     obs.connect({ address: 'localhost:4444', password: OBSwsPassword })
@@ -151,6 +210,8 @@ setInterval(function () {
 
 ComfyJS.onChat = (user, message, flags, self, extra) => {
     console.log(user, message, extra);
+
+
 
 }
 ComfyJS.Init(twitchAccount, OAuth);

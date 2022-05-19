@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pixel</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@latest/dist/obs-websocket.js"></script>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500&display=swap');
+</style>
+
+<body onload="connect()">
+    <div class="w3-container">
+        <img id=pixelImage src=""></img>
+    </div>
+</body>
+
+
+<script>
+    const obs = new OBSWebSocket();
+
+    function connect() {
+        obs.connect({ address: 'localhost:4444', password: OBSwsPassword })
+    }
+
+    obs.addListener("BroadcastCustomMessage", function (event) {
+
+        if (event.data.what == "pixel") {
+            document.getElementById("pixelImage").src = "../" + event.data.url;
+
+            var pixelvalue = 1;
+            var pixelVisible = true;
+            obs.send("SetSourceFilterVisibility", { "sourceName": "pixel", "filterName": "Shader", "filterEnabled": pixelVisible })
+            obs.send("SetSourceFilterSettings", { "sourceName": "pixel", "filterName": "Shader", "filterSettings": { "PixelScale": pixelvalue } })
+            console.log("coucou")
+
+
+
+            setInterval(function () {
+                if (pixelvalue < 100) {
+                    obs.send("SetSourceFilterSettings", { "sourceName": "pixel", "filterName": "Shader", "filterSettings": { "PixelScale": pixelvalue } })
+                    pixelvalue++
+                }
+                else {
+                    if (pixelVisible)
+                    {
+                        pixelVisible = false;
+                        obs.send("SetSourceFilterVisibility", { "sourceName": "pixel", "filterName": "Shader", "filterEnabled": pixelVisible })
+                    }
+                }
+            }, 100);
+        }
+    })
+</script>
+<script src="../config.js"></script>
+
+</html>
