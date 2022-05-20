@@ -7,7 +7,7 @@ const OBSwsPassword = "okokok";
 // Nom du compte Twitch
 const twitchAccount = "TotoroPHD";
 // OAuth 
-const OAuth = "oauth:bdi7ytz9b78cc86skwqvk0hp6p5qdo"
+const OAuth = "oauth:yourOAuthHere"
 // Nom source navigateur layout
 
 
