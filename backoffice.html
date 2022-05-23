@@ -1,51 +1,73 @@
 ﻿<!DOCTYPE html>
 <html>
-    <head>
-        <title>Blindtest Backoffice</title>
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">            
-        <script src="https://cdn.jsdelivr.net/npm/comfy.js@latest/dist/comfy.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@latest/dist/obs-websocket.js"></script>
-    </head>
-    <body onload = "connect()">
-        <div class="w3-container w3-center">
-            <div class = "w3-container">
-                <div class="w3-container">
-                    <div class="w3-container" id="OBScoLabel"><span style="color:red">Non connecté</span></div>
-                </div>
-            </div>
 
-            <div class="w3-container w3-margin-bottom">
-                <button class="w3-button w3-grey w3-border w3-border-black" id="btnCam">Camera is ON</button>
-                <button class="w3-button w3-grey w3-border w3-border-black" id="btnScore">Score</button>
-                <button class="w3-button w3-grey w3-border w3-border-black" id="btnTotal">Total</button>
-                <button class="w3-button w3-grey w3-border w3-border-black" id="btnProgramme">Programme</button>
-                <button class="w3-button w3-grey w3-border w3-border-black" id="btnHideVideos">Hide All Videos</button>
-            </div>
+<head>
+    <title>Blindtest Backoffice</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://cdn.jsdelivr.net/npm/comfy.js@latest/dist/comfy.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@latest/dist/obs-websocket.js"></script>
+</head>
 
-            <div class = "w3-container">
-                <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnPrevGame">Previous Game</button>
-                <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnGameTitle"></button>
-                <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnNextGame">Next Game</button>
+<body onload="connect()">
+    <div class="w3-container w3-center">
+        <div class="w3-container">
+            <div class="w3-container">
+                <div class="w3-container" id="OBScoLabel"><span style="color:red">Non connecté</span></div>
             </div>
-
-            <div class="w3-container w3-border w3-xlarge" style="height: 200px; overflow: auto; margin:auto;">
-                <div id="displayQuestions"></div>
-            </div>
-
-            <div class = "w3-container">
-                <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnPrevQuestion">Previous Question</button>
-                <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnStartQuestion">Start Question</button>
-                <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnNextQuestion">Next Question</button>
-            </div>
-            
-            
-            <div class = "w3-container w3-margin-top">
-                <button class="w3-button w3-grey w3-border w3-border-black" id="btnGeoGuessr">GeoGuessr</button>
-            </div>   
         </div>
-    </body>
-    <script src="config.js"></script>
-    <script src="games.js"></script>
-    <script src="backoffice.js"></script>
+
+        <div class="w3-container w3-margin-bottom">
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnCam">Camera is ON</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnScore">Score</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnTotal">Total</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnProgramme">Programme du jour</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnNavigateur">Navigateur</button>
+        </div>
+
+        <div class="w3-container">
+            <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnPrevGame">Previous Game</button>
+            <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnGameTitle"></button>
+            <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnNextGame">Next Game</button>
+        </div>
+
+        <div class="w3-container w3-border w3-xlarge" style="height: 200px; overflow: auto; margin:auto;">
+            <div id="displayQuestions"></div>
+        </div>
+        <input class="w3-check" id="darkmode" type="checkbox">
+        <label>hide text</label>
+
+        <div class="w3-container">
+            <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnPrevQuestion">Previous
+                Question</button>
+            <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnStartQuestion">Start
+                Question</button>
+            <button class="w3-button w3-third w3-grey w3-border w3-border-black" id="btnNextQuestion">Next
+                Question</button>
+        </div>
+
+        
+
+        <div class="w3-container w3-margin-top">
+            Génériques transition :
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnGeoGuessr">GeoGuessr</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnPixel">Pixel</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnRedactle">Redactle</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnCineplus">Ciné+</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnRaconteMal">RaconteMal</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnReprises">Les Reprises</button>
+            <p></p>
+            Panic :
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnHideVideos">Hide All Videos</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnHideBrowser">Hide All Browser Sources</button>
+            <button class="w3-button w3-grey w3-border w3-border-black" id="btnRefreshBrowser">Refresh All Browser Sources</button>
+        </div>
+
+        <input class="w3-check" type="checkbox" id="testMode"><label>Test Mode</label>
+    </div>
+</body>
+<script src="config.js"></script>
+<script src="games.js"></script>
+<script src="backoffice.js"></script>
+
 </html>

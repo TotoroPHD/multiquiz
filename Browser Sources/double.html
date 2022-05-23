@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <title>Programme</title>
+    <title>Double
+    </title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@latest/dist/obs-websocket.js"></script>
@@ -39,7 +40,7 @@
 
 <body onload="connect()">
     <div class="w3-container w3-center center">
-        <div id="programme">COUCOU</div>
+        <div id="simple">COUCOU</div>
     </div>
 </body>
 
@@ -47,12 +48,7 @@
 <script src="../config.js"></script>
 <script>
 
-    var prog = document.getElementById("programme");
-    prog.innerHTML = "<h1>Programme du 31 mai</h1>"
-    for (var i = 0; i < games.length; i++) {
-        if (!games[i].done) prog.innerHTML += "<p>" + games[i].title + "</p>"
-        else prog.innerHTML += "<p><s>" + games[i].title + "</s></p>"
-    }
+    var prog = document.getElementById("simple");
 
     const obs = new OBSWebSocket();
 
@@ -61,13 +57,8 @@
     }
 
     obs.addListener("BroadcastCustomMessage", function (event) {
-        if (event.data.what == "programme") {
-            var prog = document.getElementById("programme");
-            prog.innerHTML = "<h1>Programme du 31 mai</h1>"
-            for (var i = 0; i < event.data.games.length; i++) {
-                if (!event.data.games[i].done) prog.innerHTML += "<p>" + event.data.games[i].title + "</p>"
-                else prog.innerHTML += "<p><s>" + event.data.games[i].title + "</s></p>"
-            }
+        if (event.data.what == "simple") {
+            
         }
 
     })

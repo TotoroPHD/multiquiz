@@ -1,5 +1,6 @@
 const obs = new OBSWebSocket();
 var OBSconnected = false
+var testmode = false;
 // ------------------------------------------------------
 //         GESTION AFFICHAGE PAGE BACKOFFICE
 // ------------------------------------------------------
@@ -17,7 +18,8 @@ var curQuestion = 0;
 changeText("btnGameTitle", games[curGame].title)
 redrawQuestion()
 
-
+var allBrowserSources = ["scoreTotal", "scoreManche", "programme", "maps", "pixel", "rightscreen", "simple", "double"]
+var allVideos = ["VLC", "reprises", "racontemal", "cineplus", "Redactle", "Balthazar Pixel", "GeoGuessr Inversé"]
 
 
 // ------------------------------------------------------
@@ -31,13 +33,6 @@ document.getElementById('btnCam').addEventListener('click', function () {
         else { document.getElementById('btnCam').innerHTML = "Camera is ON" }
         display("cam", !data.visible)
     })
-});
-
-document.getElementById('btnGeoGuessr').addEventListener('click', function () {
-    obs.send("GetSceneItemProperties", { "item": "GeoGuessr Inversé" }).then(data => {
-        if (!data.visible) display("GeoGuessr Inversé", true)
-    })
-    obs.send("RestartMedia", { "sourceName": "GeoGuessr Inversé" })
 });
 
 document.getElementById('btnScore').addEventListener('click', function () {
@@ -58,6 +53,13 @@ document.getElementById('btnTotal').addEventListener('click', function () {
     })
 });
 
+document.getElementById('btnNavigateur').addEventListener('click', function () {
+    obs.send("GetSceneItemProperties", { "item": "rightscreen" }).then(data => {
+        display("rightscreen", !data.visible)
+        display("titre", data.visible)
+    })
+});
+
 document.getElementById('btnProgramme').addEventListener('click', function () {
     obs.send("GetSceneItemProperties", { "item": "programme" }).then(data => {
         var programme = new Object();
@@ -69,10 +71,6 @@ document.getElementById('btnProgramme').addEventListener('click', function () {
         sendToOBS(programme);
         display("programme", !data.visible)
     })
-});
-
-document.getElementById('btnHideVideos').addEventListener('click', function () {
-    display("GeoGuessr Inversé", false)
 });
 
 document.getElementById('btnPrevGame').addEventListener('click', function () {
@@ -87,28 +85,151 @@ document.getElementById('btnNextGame').addEventListener('click', function () {
     redrawQuestion()
 });
 
+document.getElementById('btnGameTitle').addEventListener('click', function () {
+    display("titre", false);
+
+    var titre = new Object();
+    titre.what = "titre";
+    titre.titre = games[curGame].title;
+    sendToOBS(titre);
+
+    display("titre", true);
+});
+
+document.getElementById('testMode').addEventListener('change', function () {
+    if (this.checked) { testmode = true; } else { testmode = false; }
+});
+
+document.getElementById('darkmode').addEventListener('change', function () {
+    if (this.checked) { document.getElementById("displayQuestions").style.backgroundColor = "black"; }
+    else { document.getElementById("displayQuestions").style.backgroundColor = "white"; }
+});
+
 document.getElementById('btnPrevQuestion').addEventListener('click', function () {
     if (curQuestion > 0) { curQuestion--; redrawQuestion() }
 });
 
 document.getElementById('btnStartQuestion').addEventListener('click', function () {
-    if (games[curGame].subtype == "pixel")
-    {
-        if (games[curGame].questions[curQuestion].url != null)
-        {
+
+    if (games[curGame].type == "simple") {
+        var simple = new Object();
+        simple.what = "simple"
+        simple.answer = games[curGame].questions[curQuestion].name;
+        simple.fullname = games[curGame].questions[curQuestion].fullname;
+
+        sendToOBS(simple)
+
+        games[curGame].questions[curQuestion].done = true;
+    }
+
+    if (games[curGame].type == "double") {
+        var simple = new Object();
+        simple.what = "simple"
+        simple.answer = games[curGame].questions[curQuestion][0].name;
+        simple.fullname = games[curGame].questions[curQuestion][0].fullname;
+        sendToOBS(simple)
+
+        var double = new Object();
+        double.what = "double"
+        double.answer = games[curGame].questions[curQuestion][1].name;
+        double.fullname = games[curGame].questions[curQuestion][1].fullname;
+        sendToOBS(double)
+    }
+
+    if (games[curGame].subtype == "pixel") {
+        if (games[curGame].questions[curQuestion].url != null) {
+
+            display("pixel", true);
             var pixel = new Object();
             pixel.what = "pixel";
             pixel.url = games[curGame].questions[curQuestion].url
             sendToOBS(pixel);
         }
     }
+
+    if (games[curGame].subtype == "geoguessr") {
+        if (games[curGame].questions[curQuestion].url != null) {
+            var geoguessr = new Object();
+            geoguessr.what = "geoguessr";
+            geoguessr.url = games[curGame].questions[curQuestion].url
+            sendToOBS(geoguessr);
+        }
+    }
+
+
 });
 
 document.getElementById('btnNextQuestion').addEventListener('click', function () {
     if (curQuestion < games[curGame].questions.length - 1) { curQuestion++; redrawQuestion() }
 });
 
+// ------------------------------------------------------
+//                ENVOI VIDEOS TRANSITION
+// ------------------------------------------------------
 
+
+document.getElementById('btnGeoGuessr').addEventListener('click', function () {
+    obs.send("GetSceneItemProperties", { "item": "GeoGuessr Inversé" }).then(data => {
+        if (!data.visible) display("GeoGuessr Inversé", true)
+    })
+    obs.send("RestartMedia", { "sourceName": "GeoGuessr Inversé" })
+});
+
+document.getElementById('btnPixel').addEventListener('click', function () {
+    obs.send("GetSceneItemProperties", { "item": "Balthazar Pixel" }).then(data => {
+        if (!data.visible) display("Balthazar Pixel", true)
+    })
+    obs.send("RestartMedia", { "sourceName": "Balthazar Pixel" })
+});
+
+document.getElementById('btnRedactle').addEventListener('click', function () {
+    obs.send("GetSceneItemProperties", { "item": "Redactle" }).then(data => {
+        if (!data.visible) display("Redactle", true)
+    })
+    obs.send("RestartMedia", { "sourceName": "Redactle" })
+});
+
+document.getElementById('btnCineplus').addEventListener('click', function () {
+    obs.send("GetSceneItemProperties", { "item": "cineplus" }).then(data => {
+        if (!data.visible) display("cineplus", true)
+    })
+    obs.send("RestartMedia", { "sourceName": "cineplus" })
+});
+
+document.getElementById('btnRaconteMal').addEventListener('click', function () {
+    obs.send("GetSceneItemProperties", { "item": "racontemal" }).then(data => {
+        if (!data.visible) display("racontemal", true)
+    })
+    obs.send("RestartMedia", { "sourceName": "racontemal" })
+});
+
+document.getElementById('btnReprises').addEventListener('click', function () {
+    obs.send("GetSceneItemProperties", { "item": "reprises" }).then(data => {
+        if (!data.visible) display("reprises", true)
+    })
+    obs.send("RestartMedia", { "sourceName": "reprises" })
+});
+
+
+document.getElementById('btnHideVideos').addEventListener('click', function () {
+    for (var i = 0; i < allVideos.length; i++) {
+        display(allVideos[i], false)
+    }
+});
+
+
+
+document.getElementById('btnHideBrowser').addEventListener('click', function () {
+    for (var i = 0; i < allBrowserSources.length; i++) {
+        display(allBrowserSources[i], false)
+    }
+});
+
+document.getElementById('btnRefreshBrowser').addEventListener('click', function () {
+    for (var i = 0; i < allBrowserSources.length; i++) {
+        obs.send("RefreshBrowserSource", { "sourceName": allBrowserSources[i] })
+    }
+});
 
 
 // ------------------------------------------------------
@@ -116,16 +237,34 @@ document.getElementById('btnNextQuestion').addEventListener('click', function ()
 // ------------------------------------------------------
 
 function redrawQuestion() {
-    changeText("displayQuestions", displayQuestionFromJSON(games[curGame].questions[curQuestion]));
+    if (games[curGame].questions.length > 0) {
+        changeText("displayQuestions", displayQuestionFromJSON(games[curGame].questions[curQuestion]));
+        if (games[curGame].questions[curQuestion].done) {
+            document.getElementById("displayQuestions").style.backgroundColor = "green";
+        }
+        else {
+            if (document.getElementById("darkmode").checked) {
+                document.getElementById("displayQuestions").style.backgroundColor = "black";
+            }
+            else
+                document.getElementById("displayQuestions").style.backgroundColor = "white";
+        }
+
+    }
+    else {
+        changeText("displayQuestions", "")
+    }
+    var curQ = curQuestion + 1
+    document.getElementById('btnStartQuestion').innerHTML = "Start Question " + curQ + "/" + games[curGame].questions.length
 }
 
 function displayQuestionFromJSON(json) {
     var texte = JSON.stringify(json);
-    texte=texte.replaceAll("{", "")
-    texte=texte.replaceAll("}", "")
-    texte=texte.replaceAll("\"", "")
-    texte=texte.replaceAll(":", " : ")
-    texte=texte.replaceAll(",", "<br>")
+    texte = texte.replaceAll("{", "")
+    texte = texte.replaceAll("}", "")
+    texte = texte.replaceAll("\"", "")
+    texte = texte.replaceAll(":", " : ")
+    texte = texte.replaceAll(",", "<br>")
     console.log(texte)
     return texte
 }

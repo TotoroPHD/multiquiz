@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Titre</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@latest/dist/obs-websocket.js"></script>
+</head>
+
+<body onload="connect()">
+    <iframe id="maps" src="https://www.google.com/maps/embed?pb=!4v1652995487244!6m8!1m7!1sdFTdLKMQPBpqg9bPmYZt_A!2m2!1d47.21401403370045!2d-1.54028936880508!3f307.34384217927243!4f0!5f0.7820865974627469" width="1200" height="800" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</body>
+
+<script src="../games.js"></script>
+<script src="../config.js"></script>
+<script>
+    const obs = new OBSWebSocket();
+
+    function connect() {
+        obs.connect({ address: 'localhost:4444', password: OBSwsPassword })
+    }
+
+    obs.addListener("BroadcastCustomMessage", function (event) {
+        if (event.data.what == "maps") {
+            document.getElementById("maps").src = event.data.url;
+        }
+    })
+
+
+</script>
+
+</html>

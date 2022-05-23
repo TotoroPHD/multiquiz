@@ -28,15 +28,13 @@
     obs.addListener("BroadcastCustomMessage", function (event) {
 
         if (event.data.what == "pixel") {
-            document.getElementById("pixelImage").src = "../" + event.data.url;
+            document.getElementById("pixelImage").src = "../games/pixel/" + event.data.url;
 
             var pixelvalue = 1;
             var pixelVisible = true;
             obs.send("SetSourceFilterVisibility", { "sourceName": "pixel", "filterName": "Shader", "filterEnabled": pixelVisible })
             obs.send("SetSourceFilterSettings", { "sourceName": "pixel", "filterName": "Shader", "filterSettings": { "PixelScale": pixelvalue } })
             console.log("coucou")
-
-
 
             setInterval(function () {
                 if (pixelvalue < 100) {
@@ -50,7 +48,7 @@
                         obs.send("SetSourceFilterVisibility", { "sourceName": "pixel", "filterName": "Shader", "filterEnabled": pixelVisible })
                     }
                 }
-            }, 100);
+            }, 300);
         }
     })
 </script>
