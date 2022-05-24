@@ -5,6 +5,7 @@
   <title>Score</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <script src="https://cdn.jsdelivr.net/npm/obs-websocket-js@latest/dist/obs-websocket.js"></script>
 </head>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500&display=swap');
@@ -21,99 +22,35 @@
   <div class="w3-container">
     <div class="w3-container">
       <div class="w3-container" id="box">
-        <table class="w3-table w3-centered w3-hoverable w3-bordered">
-          <tr>
-            <th>Pseudo</th>
-            <th>Points de la manche</th>
-          </tr>
-          <tr class="w3-hover-green">
-            <td>Jill</td>
-            <td>50</td>
-          </tr>
-          <tr class="w3-hover-green">
-            <td>Eve</td>
-            <td>94</td>
-          </tr>
-          <tr class="w3-hover-green">
-            <td>Adam</td>
-            <td>67</td>
-          </tr>
-          <tr>
-            <td>Jill</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>Eve</td>
-            <td>94</td>
-          </tr>
-          <tr>
-            <td>Adam</td>
-            <td>67</td>
-          </tr>
-          <tr>
-            <td>Jill</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>Eve</td>
-            <td>94</td>
-          </tr>
-          <tr>
-            <td>Adam</td>
-            <td>67</td>
-          </tr>
-          <tr>
-            <td>Jill</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>Eve</td>
-            <td>94</td>
-          </tr>
-          <tr>
-            <td>Adam</td>
-            <td>67</td>
-          </tr>
-          <tr>
-            <td>Jill</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>Eve</td>
-            <td>94</td>
-          </tr>
-          <tr>
-            <td>Adam</td>
-            <td>67</td>
-          </tr>
-          <tr>
-            <td>Jill</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>Eve</td>
-            <td>94</td>
-          </tr>
-          <tr>
-            <td>Adam</td>
-            <td>67</td>
-          </tr>
-          <tr>
-            <td>Jill</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>Eve</td>
-            <td>94</td>
-          </tr>
-          <tr>
-            <td>Adam</td>
-            <td>67</td>
-          </tr>                              
+        <table class="w3-table w3-centered w3-hoverable w3-bordered" id="update">
+
         </table>
       </div>
     </div>
   </div>
 </body>
 
+<script src="../config.js"></script>
+<script>
+
+  const obs = new OBSWebSocket();
+
+  function connect() {
+    obs.connect({ address: 'localhost:4444', password: OBSwsPassword })
+  }
+
+  function sendToOBS(obj) {
+    obs.send("BroadcastCustomMessage", { "realm": "test", "data": obj });
+  }
+
+  obs.addListener("BroadcastCustomMessage", function (event) {
+    if (event.data.what == "updateScoreManche") {
+      document.getElementById("update").innerHTML = "<tr><th>Pseudo</th><th>Points de la manche</th></tr>"
+      for (var i = 0; i < event.data.scoreManche.length; i++) {
+        document.getElementById("update").innerHTML += "<tr class=\"w3-hover-green\"><td>" + event.data.scoreManche[i].user + "</td><td>" + event.data.scoreManche[i].points + "</td></tr>"
+      }
+    }
+  })
+
+</script>
 </html>

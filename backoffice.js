@@ -1,6 +1,10 @@
 const obs = new OBSWebSocket();
 var OBSconnected = false
 var testmode = false;
+
+var scoreManche = [];
+var scoreTotel = [];
+
 // ------------------------------------------------------
 //         GESTION AFFICHAGE PAGE BACKOFFICE
 // ------------------------------------------------------
@@ -217,8 +221,6 @@ document.getElementById('btnHideVideos').addEventListener('click', function () {
     }
 });
 
-
-
 document.getElementById('btnHideBrowser').addEventListener('click', function () {
     for (var i = 0; i < allBrowserSources.length; i++) {
         display(allBrowserSources[i], false)
@@ -230,7 +232,6 @@ document.getElementById('btnRefreshBrowser').addEventListener('click', function 
         obs.send("RefreshBrowserSource", { "sourceName": allBrowserSources[i] })
     }
 });
-
 
 // ------------------------------------------------------
 //                FONCTIONS UTILITAIRES 
@@ -269,13 +270,52 @@ function displayQuestionFromJSON(json) {
     return texte
 }
 
-
 function connect() {
     obs.connect({ address: 'localhost:4444', password: OBSwsPassword })
 }
 
 function display(name, show) {
     obs.send("SetSceneItemRender", { "source": name, "render": show })
+}
+
+obs.addListener("BroadcastCustomMessage", function (event) {
+    if (event.data.what == "pointsManche") {
+        for (var i =0; i < event.data.winners.length; i++)
+        {
+            addPoints(event.data.winners[i].points, event.data.winners[i].user)
+        }
+    }
+
+    scoreManche.users.sort(function (a, b) { return b.points - a.points; })
+
+    var updateScoreManche = new Object();
+    updateScoreManche.what = "updateScoreManche"
+    updateScoreManche.scoreManche = scoreManche
+    sendToOBS(updateScoreManche);
+})
+
+function addPoints(amount, user, print=false) {
+    if (scoreManche.users.find(x => x.user === user) != undefined) {
+        scoreManche.users.find(x => x.user === user).points = scoreManche.users.find(x => x.user === user).points + amount;
+    }
+    else {
+        scoreManche.users.push({ 'user': user, 'points': amount });
+    }
+
+    if (print)
+    {
+        console.log("coucou");
+    }
+}
+
+function changePointsForTotal()
+{
+
+}
+
+function addPointsToTotal()
+{
+    
 }
 
 function similarity(s1, s2) {
